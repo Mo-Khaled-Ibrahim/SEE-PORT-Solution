@@ -1,0 +1,203 @@
+-- creating tables and extract from CSV with Bulk insert
+
+CREATE DATABASE part1port_system;
+GO
+
+USE part1port_system;
+GO
+-- Company Names (Ship Owners)
+CREATE TABLE Ship_Owner (
+    Company_ID VARCHAR(50) PRIMARY KEY,
+    Company_Name VARCHAR(100) NOT NULL,
+    Email VARCHAR(100),
+    Fax_Number VARCHAR(30),
+    Phone_Number VARCHAR(30)
+);
+
+BULK INSERT Ship_Owner
+FROM 'D:\ITI\FinalProject\Tables\1.Company names.csv'
+WITH (
+  FIELDTERMINATOR = ',',
+  ROWTERMINATOR = '\n',
+  FIRSTROW = 2
+);
+
+-- test the connection 
+--select * from Ship_Owner;
+-------------------------------------------------------------------------
+
+-- Terminal
+CREATE TABLE Terminal (
+    Terminal_ID VARCHAR(50) PRIMARY KEY,
+    Name VARCHAR(100) NOT NULL,
+    Longitude DECIMAL(10,6),
+    Latitude DECIMAL(10,6),
+    Capacity INT,
+    Depth DECIMAL(10,2),
+    Contact_number VARCHAR(30),
+    Terminal_Manager_ID VARCHAR(50) NULL
+);
+BULK INSERT Terminal
+FROM 'D:\ITI\FinalProject\Tables\4.Terminal.csv'
+WITH (
+  FIELDTERMINATOR = ',',
+  ROWTERMINATOR = '\n',
+  FIRSTROW = 2
+);
+
+-- test the connection 
+--select * from Terminal;
+-------------------------------------------------------------------------
+
+-- Dock
+CREATE TABLE Dock (
+    Dock_ID VARCHAR(50) PRIMARY KEY,
+    Terminal_ID VARCHAR(50) NULL,
+    Available BIT,
+    FOREIGN KEY (Terminal_ID) REFERENCES Terminal(Terminal_ID)
+        ON DELETE SET NULL
+        ON UPDATE CASCADE
+);
+BULK INSERT Dock
+FROM 'D:\ITI\FinalProject\Tables\5.Dock.csv'
+WITH (
+  FIELDTERMINATOR = ',',
+  ROWTERMINATOR = '\n',
+  FIRSTROW = 2
+);
+
+-- test the connection 
+--select * from Dock;
+-------------------------------------------------------------------------
+
+
+-- Ship Details
+CREATE TABLE Ship (
+    IMO_Code VARCHAR(20) PRIMARY KEY,
+    Ship_Name VARCHAR(100) NOT NULL,
+    Ship_Type VARCHAR(50),
+    Flag VARCHAR(50),
+    Tonnage DECIMAL(10,2),
+    Length DECIMAL(10,2),
+    Draft DECIMAL(10,2),
+    Company_ID VARCHAR(50),
+    FOREIGN KEY (Company_ID) REFERENCES Ship_Owner(Company_ID)
+        ON DELETE SET NULL
+        ON UPDATE CASCADE
+);
+BULK INSERT Ship
+FROM 'D:\ITI\FinalProject\Tables\2.Ship_Details.csv'
+WITH (
+  FIELDTERMINATOR = ',',
+  ROWTERMINATOR = '\n',
+  FIRSTROW = 2
+);
+
+-- test
+--select * from Ship
+-------------------------------------------------------------------------
+
+
+-- Voyage
+CREATE TABLE Voyage (
+    Voyage_ID VARCHAR(50),
+    IMO_Code VARCHAR(20),
+    Origin_Country_Port VARCHAR(100),
+    Egypt_Port VARCHAR(100),
+    ETD_Origin DATETIME,
+    ETA_Egypt DATETIME,
+    Status VARCHAR(30),
+	PRIMARY KEY (Voyage_ID, Status),
+    FOREIGN KEY (IMO_Code) REFERENCES Ship(IMO_Code)
+        ON DELETE SET NULL
+        ON UPDATE CASCADE
+);
+BULK INSERT Voyage
+FROM 'D:\ITI\FinalProject\Tables\3.Voyage.csv'
+WITH (
+  FIELDTERMINATOR = ',',
+  ROWTERMINATOR = '\n',
+  FIRSTROW = 2
+);
+
+-- test
+--select * from Voyage
+-------------------------------------------------------------------------
+
+-- Ship Docking
+CREATE TABLE Ship_Docking (
+    Dock_Occurence_ID INT IDENTITY(1,1) PRIMARY KEY,
+	IMO_Code VARCHAR(20),
+    Terminal_ID VARCHAR(50),
+    Dock_ID VARCHAR(50),
+    FOREIGN KEY (IMO_Code) REFERENCES Ship(IMO_Code),
+    FOREIGN KEY (Terminal_ID) REFERENCES Terminal(Terminal_ID),
+    FOREIGN KEY (Dock_ID) REFERENCES Dock(Dock_ID)
+);
+
+BULK INSERT Ship_Docking
+FROM 'D:\ITI\FinalProject\Tables\6.Ship_Docking .csv'
+WITH (
+  FIELDTERMINATOR = ',',
+  ROWTERMINATOR = '\n',
+  FIRSTROW = 2
+);
+
+-- test
+--select * from Ship_Docking
+
+-------------------------------------------------------------------------
+-- Yard
+CREATE TABLE Yard (
+	Yard_ID VARCHAR(50) not null,
+    Terminal_ID VARCHAR(50) not null,
+    Yard_Type VARCHAR(50),
+    Status VARCHAR(30),
+    Capacity INT,
+    Yard_Area DECIMAL(10,2),
+	PRIMARY KEY (Yard_ID,Terminal_ID),
+    FOREIGN KEY (Terminal_ID) REFERENCES Terminal(Terminal_ID)
+        ON DELETE CASCADE 
+        ON UPDATE CASCADE
+);
+
+BULK INSERT Yard
+FROM 'D:\ITI\FinalProject\Tables\8.Yard.csv'
+WITH (
+  FIELDTERMINATOR = ',',
+  ROWTERMINATOR = '\n',
+  FIRSTROW = 2
+);
+-- test
+--select * from Yard
+
+-------------------------------------------------------------------------
+
+-- Cargo Details
+CREATE TABLE Cargo_Details (
+    Cargo_ID VARCHAR(50) PRIMARY KEY,
+    Voyage_ID VARCHAR(50),
+    Terminal_ID VARCHAR(50),
+    Yard_ID VARCHAR(50),
+    Volume DECIMAL(10,2),
+    Weight DECIMAL(10,2),
+    Description VARCHAR(255),
+    Status VARCHAR(30),
+    FOREIGN KEY (Voyage_ID, Status) REFERENCES Voyage(Voyage_ID, Status),
+    FOREIGN KEY (Yard_ID, Terminal_ID) REFERENCES Yard(Yard_ID,Terminal_ID)
+);
+
+BULK INSERT Cargo_Details
+FROM 'D:\ITI\FinalProject\Tables\7.Cargo_Details .csv'
+WITH (
+  FIELDTERMINATOR = ',',
+  ROWTERMINATOR = '\n',
+  FIRSTROW = 2
+);
+
+-- test
+--select * from Cargo_Details
+
+-------------------------------
+SELECT FORMAT(entry_date, 'yyyy-MM-dd') + ' - ' + FORMAT(entry_date, 'HH') AS DateHour
+FROM container_yard_entry;

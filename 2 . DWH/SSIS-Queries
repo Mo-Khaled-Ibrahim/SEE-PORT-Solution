@@ -1,0 +1,160 @@
+Fact creation:
+SELECT *
+FROM (
+    -- CUSTOMER CHARGES
+    SELECT
+        invoice_id,
+        client_id,
+        container_id,
+        customs_fees,
+        NULL AS cargo_operation_id,
+        NULL AS total_operation_charge,
+        NULL AS total_violation_fees,
+        NULL AS total_charge,
+        CONVERT(INT, CONVERT(CHAR(8), date_documented, 112)) AS documentation_date_bk,
+        CONVERT(INT, CONVERT(CHAR(8), payment_date, 112)) AS settlement_date_bk,
+        date_documented,
+        payment_date AS settlement_date,
+        payment_status,
+        CAST(NULL AS VARCHAR(50)) AS cargo_id,
+        CAST(NULL AS VARCHAR(50)) AS violation_id,
+        CAST(NULL AS VARCHAR(50)) AS emp_id,
+        CAST(NULL AS VARCHAR(50)) AS terminal_id,
+        CAST(NULL AS VARCHAR(50)) AS voyage_id,
+        CAST(NULL AS VARCHAR(50)) AS company_id,
+        'CustomerCharge' AS SourceSystem
+    FROM dbo.customer_charge
+
+    UNION ALL
+
+    -- SHIPPING COMPANY CHARGES
+    SELECT
+        scc.invoice_id,
+        NULL AS client_id,
+        NULL AS container_id,
+        NULL AS customs_fees,
+        scc.cargo_operation_id,
+        scc.total_operation_charge,
+        scc.total_violation_fees,
+        scc.total_charge,
+        CONVERT(INT, CONVERT(CHAR(8), scc.documentation_date, 112)) AS documentation_date_bk,
+        CONVERT(INT, CONVERT(CHAR(8), scc.settlement_date, 112)) AS settlement_date_bk,
+        scc.documentation_date,
+        scc.settlement_date,
+        scc.payment_status,
+        cd_final.cargo_id,
+        cvf_final.violation_id,
+        eo_final.emp_id,
+        ed.terminal_id,
+        cd_final.voyage_id,
+        ship_final.company_id,
+        'ShippingCompanyCharge' AS SourceSystem
+    FROM (
+        SELECT *
+        FROM (
+            SELECT *,
+                   ROW_NUMBER() OVER (PARTITION BY cargo_operation_id ORDER BY invoice_id) AS rn
+            FROM dbo.shipping_company_charge
+        ) AS x
+        WHERE rn = 1
+    ) AS scc
+
+    LEFT JOIN cargo_operation co ON co.cargo_operation_id = scc.cargo_operation_id
+
+    OUTER APPLY (
+        SELECT TOP 1 violation_id
+        FROM cargo_violation_fees
+        WHERE cargo_operation_id = scc.cargo_operation_id
+        ORDER BY violation_id
+    ) cvf_final
+
+    OUTER APPLY (
+        SELECT TOP 1 emp_id
+        FROM employee_operation
+        WHERE cargo_operation_id = scc.cargo_operation_id
+        ORDER BY emp_id
+    ) eo_final
+
+    LEFT JOIN employee_details ed ON ed.emp_id = eo_final.emp_id
+
+    OUTER APPLY (
+        SELECT TOP 1 cd.cargo_id, cd.voyage_id
+        FROM cargo_details cd
+        JOIN yard y ON cd.yard_id = y.yard_id
+        JOIN cargo_operation co_inner ON co_inner.cargo_operation_id = scc.cargo_operation_id
+        WHERE y.terminal_id = ed.terminal_id
+          AND cd.cargo_id = co_inner.cargo_id
+        ORDER BY cd.cargo_id
+    ) cd_final
+
+    OUTER APPLY (
+        SELECT TOP 1 so.company_id 
+        FROM cargo_details cd_ship
+        JOIN voyage v ON v.voyage_id = cd_ship.voyage_id
+        JOIN ship s ON s.imo_code = v.imo_code
+        JOIN ship_owner so ON so.company_id = s.company_id
+        WHERE cd_ship.cargo_id = co.cargo_id
+        ORDER BY so.company_id
+    ) ship_final
+) AS final_table
+WHERE date_documented > '2000-01-01'
+  AND date_documented < '2025-01-01'
+  AND invoice_id > 'a';
+--------------------------------------------
+DimOperation:
+
+select vio_fees.violation_id, vio_fees.violation_type, vio_fees.violation_fee, vc.liable_party, co.cargo_operation_id, co.imo_code, co.operation_date,
+subtype.operation_type,
+subtype.operation_subtype, subtype.base_charge 
+from operation_subtype_catalog as subtype
+left join cargo_operation_charge as op_charge
+on subtype.operation_id = op_charge.operation_id 
+right join cargo_operation as co
+on co.cargo_operation_id = op_charge.cargo_operation_id
+left join cargo_violation_fees as vio_fees
+on co.cargo_operation_id = vio_fees.cargo_operation_id 
+right join violation_catalog as vc
+on vc.violation_id = vio_fees.violation_id
+-----------------------------------------------------------------
+DimEmployee: 
+select emp_id, full_name , [role], supervisor_id, terminal_id
+from employee_details
+-----------------------------------------------------------------
+DimCargo:
+
+select Cargo_ID, Volume, [weight], [Description] 
+from Cargo_Details
+
+-----------------------------------------------------------------
+DimShip: 
+select s.IMO_Code, s.Ship_Name, s.Ship_Type, s.Company_ID, s.Length, s.Tonnage, s.Draft, so.Company_Name, s.Flag
+from Ship as s 
+left join Ship_Owner as so
+on s.Company_ID = so.Company_ID
+-----------------------------------------------------------------
+DimClient:
+select client_id, full_name, client_type, company_name,email, address, number_of_containers
+
+from client_details
+-----------------------------------------------------------------
+DimVoyage:
+select Voyage_ID, IMO_Code, Origin_Country_Port, Egypt_Port, ETD_Origin,ETA_Egypt
+from Voyage
+-----------------------------------------------------------------
+DimContainer:
+
+select cd.container_id, cont_yard.Terminal_id, cont_yard.yard_id, cont_yard.entry_date, cont_yard.exit_date, cd.volume, cd.weight, cd.content
+from containers_details as cd 
+left join container_yard_entry as cont_yard
+on cd.container_id = cont_yard.container_id
+
+-----------------------------------------------------------------
+DimTerminal:
+
+select t.Terminal_ID, t.Name, t.Terminal_Manager_ID, t.Longitude, t.Latitude, t.Capacity as terminal_capacity, t.Depth, y.Yard_ID, y.Yard_Type, y.Capacity as yard_capacity, y.Yard_Area, 
+d.Dock_ID, d.Available as dock_availabe
+from Terminal as t
+left join Dock as d
+on t.Terminal_ID = d.Terminal_ID
+right join Yard as y
+on t.Terminal_ID = y.Terminal_ID
