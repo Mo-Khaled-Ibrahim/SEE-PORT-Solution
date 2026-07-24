@@ -95,7 +95,11 @@ This project follows a comprehensive development lifecycle covering database des
 
 <!-- DWH Schema Image -->
 <p align="center">
-  <img src="2 . DWH/DWH Schema.png" alt="SEEPORT Schema" width="600"/>
+  <img src="2 . DWH/Screenshot 2025-07-15 132047.png" alt="SEEPORT Schema" width="600"/>
+</p>
+
+<p align="center">
+  <img src="2 . DWH/Screenshot 2025-07-13 221714.png" alt="SEEPORT Schema" width="600"/>
 </p>
 
 ### 📊 Phase 3: Reporting & Analytics
