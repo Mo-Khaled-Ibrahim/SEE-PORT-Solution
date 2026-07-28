@@ -86,6 +86,7 @@ This project follows a comprehensive development lifecycle covering database des
   <img src="1 . DB/Schema SEE PORT Taged.png" alt="SEEPORT Schema" width="800"/>
 </p>
 
+---
 
 ### 🔄 Phase 2: ETL & Data Integration
 
@@ -106,6 +107,8 @@ This project follows a comprehensive development lifecycle covering database des
   <img src="2 . DWH/Screenshot 2025-07-13 221714.png" alt="SEEPORT Schema" width="800"/>
 </p>
 
+---
+
 ### 📊 Phase 3: Reporting & Analytics
 
 #### SQL Server Reporting Services (SSRS)
@@ -123,6 +126,8 @@ This project follows a comprehensive development lifecycle covering database des
   <img src="3 . SSRS/1.Ships by Terminal.png" alt="SSRS Report Sample" width="800"/>
 </p>
 
+---
+
 #### Power BI Dashboards
 - **Analytics Platform**: Microsoft Power BI for advanced visualizations
 - **Key Insights**:
@@ -137,6 +142,8 @@ This project follows a comprehensive development lifecycle covering database des
 <p align="center">
   <img src="4 . Dashboards sample\Operational .png" alt="Power BI Dashboard Sample" width="800"/>
 </p>
+
+---
 
 ### 🌐 Phase 4: Web Application Development
 
