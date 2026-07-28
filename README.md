@@ -26,7 +26,7 @@ Marine ports traditionally suffer from **scattered data** across multiple system
 - **Port Supervisors**: Operational coordination and monitoring
 
 <p align="center">
-  <img src="4 . Dashboards sample\Seeport_map.png" alt="SEE PORT Logo" width="600"/>
+  <img src="4 . Dashboards sample\Seeport_map.png" alt="SEE PORT Logo" width="800"/>
 </p>
 
 ---
@@ -69,7 +69,7 @@ This project follows a comprehensive development lifecycle covering database des
 
 <!-- ERD Image -->
 <p align="center">
-  <img src="1 . DB/ERD SEE PORT Taged.png" alt="SEEPORT ERD" width="600"/>
+  <img src="1 . DB/ERD SEE PORT Taged.png" alt="SEEPORT ERD" width="800"/>
 </p>
 
 #### Database Schema Implementation
@@ -83,7 +83,7 @@ This project follows a comprehensive development lifecycle covering database des
 
 <!-- Schema Image -->
 <p align="center">
-  <img src="1 . DB/Schema SEE PORT Taged.png" alt="SEEPORT Schema" width="600"/>
+  <img src="1 . DB/Schema SEE PORT Taged.png" alt="SEEPORT Schema" width="800"/>
 </p>
 
 
@@ -99,11 +99,11 @@ This project follows a comprehensive development lifecycle covering database des
 
 <!-- DWH Schema Image -->
 <p align="center">
-  <img src="2 . DWH/Screenshot 2025-07-15 132047.png" alt="SEEPORT Schema" width="600"/>
+  <img src="2 . DWH/Screenshot 2025-07-15 132047.png" alt="SEEPORT Schema" width="800"/>
 </p>
 
 <p align="center">
-  <img src="2 . DWH/Screenshot 2025-07-13 221714.png" alt="SEEPORT Schema" width="600"/>
+  <img src="2 . DWH/Screenshot 2025-07-13 221714.png" alt="SEEPORT Schema" width="800"/>
 </p>
 
 ### 📊 Phase 3: Reporting & Analytics
@@ -120,7 +120,7 @@ This project follows a comprehensive development lifecycle covering database des
 
 <!-- SSRS Sample Image -->
 <p align="center">
-  <img src="3 . SSRS/1.Ships by Terminal.png" alt="SSRS Report Sample" width="600"/>
+  <img src="3 . SSRS/1.Ships by Terminal.png" alt="SSRS Report Sample" width="800"/>
 </p>
 
 #### Power BI Dashboards
@@ -135,7 +135,7 @@ This project follows a comprehensive development lifecycle covering database des
 
 <!-- Power BI Sample Image -->
 <p align="center">
-  <img src="4 . Dashboards sample\Operational .png" alt="Power BI Dashboard Sample" width="600"/>
+  <img src="4 . Dashboards sample\Operational .png" alt="Power BI Dashboard Sample" width="800"/>
 </p>
 
 ### 🌐 Phase 4: Web Application Development
@@ -161,7 +161,7 @@ This project follows a comprehensive development lifecycle covering database des
 
 <!-- Web App Sample Image -->
 <p align="center">
-  <img src="5. Web App/LOGIN page.jpg" alt="Web App Sample" width="600"/>
+  <img src="5. Web App/LOGIN page.jpg" alt="Web App Sample" width="800"/>
 </p>
 
 #### [▶️▶️**Try Beta Version**◀️◀️](https://see-port-beta.vercel.app/)
