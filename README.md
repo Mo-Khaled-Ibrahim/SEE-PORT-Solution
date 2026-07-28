@@ -25,6 +25,10 @@ Marine ports traditionally suffer from **scattered data** across multiple system
 - **Port Managers**: Strategic decision-making and oversight
 - **Port Supervisors**: Operational coordination and monitoring
 
+<p align="center">
+  <img src="4 . Dashboards sample\Seeport_map.png" alt="SEE PORT Logo" width="600"/>
+</p>
+
 ---
 
 ## 📂 Git Repository Structure
